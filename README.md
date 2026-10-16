@@ -9,13 +9,11 @@ This repo is a copy of [Depth Anything V2](https://github.com/DepthAnything/Dept
 All scripts use the small metric model (`vits` encoder, Hypersim indoor weights, max depth 20 m).
 
 - `depth_webcam.py`: real-time webcam demo in PyTorch. Runs inference on a background thread (CUDA, Apple MPS or CPU), shows the camera feed next to a colour-mapped depth map with a distance colour bar, the metric depth at the image centre and a live FPS counter. Optional mixed precision on CUDA, grayscale output and video recording.
-- `export_onnx.py`: exports the model to ONNX (224x224 input, opset 12), then applies ONNX Runtime static INT8 quantization calibrated on random inputs.
+- `export_onnx.py`: exports the model to ONNX (224x224 input, opset 12), then applies ONNX Runtime static INT8 quantization.
 - `quantize_metric_dynamic.py`: ONNX Runtime dynamic INT8 quantization (weights only, no calibration data) and prints the size before and after.
 - `export_quant_pth.py`: PyTorch dynamic INT8 quantization of the `Linear` layers (`qnnpack` engine, for ARM / Apple Silicon CPUs), saved as TorchScript.
 - `depth_webcam_quant.py`: the same webcam demo running the ONNX model through ONNX Runtime (CPU, or CUDA when available), at 224x224 input.
 - `cuda-check.py`: prints the Python, PyTorch, CUDA and GPU setup, times a 1000x1000 matrix multiply on the GPU and lists likely causes when CUDA is missing.
-
-Rough edges, left as they were: `depth_webcam_quant.py` loads the float export `checkpoints/depth_anything_v2.onnx` rather than a quantized file; `quantize_metric_dynamic.py` expects `depth_anything_v2_small_metric.onnx`, so the export has to be renamed first; `export_quant_pth.py` calls `forward(x, is_training=False)`, which the upstream model's `forward` does not accept; and the static quantization uses random calibration data, not real images.
 
 ## Running it
 
